@@ -1,0 +1,364 @@
+{
+  "name": "Proposal Generator",
+  "nodes": [
+    {
+      "parameters": {
+        "operation": "replaceText",
+        "presentationId": "={{ $json.id }}",
+        "textUi": {
+          "textValues": [
+            {
+              "replaceText": "={{ $('OpenAI').item.json.message.content.proposalTitle }}",
+              "text": "{{proposalTitle}}"
+            },
+            {
+              "replaceText": "={{ $('OpenAI').item.json.message.content.descriptionName }}",
+              "text": "{{descriptionName}}"
+            },
+            {
+              "replaceText": "={{ $('OpenAI').item.json.message.content.oneParagraphProblemSummary }}",
+              "text": "{{oneParagraphProblemSummary}}"
+            },
+            {
+              "replaceText": "={{ $('OpenAI').item.json.message.content.solutionHeadingOne }}",
+              "text": "{{solutionHeadingOne}}"
+            },
+            {
+              "replaceText": "={{ $('OpenAI').item.json.message.content.solutionDescriptionOne }}",
+              "text": "{{solutionDescriptionOne}}"
+            },
+            {
+              "replaceText": "={{ $('OpenAI').item.json.message.content.solutionHeadingTwo }}",
+              "text": "{{solutionHeadingTwo}}"
+            },
+            {
+              "replaceText": "={{ $('OpenAI').item.json.message.content.solutionDescriptionTwo }}",
+              "text": "{{solutionDescriptionTwo}}"
+            },
+            {
+              "replaceText": "={{ $('OpenAI').item.json.message.content.solutionHeadingThree }}",
+              "text": "{{solutionHeadingThree}}"
+            },
+            {
+              "replaceText": "={{ $('OpenAI').item.json.message.content.solutionDescriptionThree }}",
+              "text": "{{solutionDescriptionThree}}"
+            },
+            {
+              "replaceText": "={{ $('OpenAI').item.json.message.content.shortScopeTitleOne }}",
+              "text": "{{shortScopeTitleOne}}"
+            },
+            {
+              "replaceText": "={{ $('OpenAI').item.json.message.content.shortScopeTitleTwo }}",
+              "text": "{{shortScopeTitleTwo}}"
+            },
+            {
+              "replaceText": "={{ $('OpenAI').item.json.message.content.shortScopeTitleThree }}",
+              "text": "{{shortScopeTitleThree}}"
+            },
+            {
+              "replaceText": "={{ $('OpenAI').item.json.message.content.shortScopeDescriptionOne }}",
+              "text": "{{shortScopeDescriptionOne}}"
+            },
+            {
+              "replaceText": "={{ $('OpenAI').item.json.message.content.shortScopeDescriptionTwo }}",
+              "text": "{{shortScopeDescriptionTwo}}"
+            },
+            {
+              "replaceText": "={{ $('OpenAI').item.json.message.content.shortScopeDescriptionThree }}",
+              "text": "{{shortScopeDescriptionThree}}"
+            },
+            {
+              "replaceText": "={{ $('OpenAI').item.json.message.content.milestoneOneDay }}",
+              "text": "{{milestoneOneDay}}"
+            },
+            {
+              "replaceText": "={{ $('OpenAI').item.json.message.content.milestoneDescriptionOne }}",
+              "text": "{{milestoneDescriptionOne}}"
+            },
+            {
+              "replaceText": "={{ $('OpenAI').item.json.message.content.milestoneTwoDay }}",
+              "text": "{{milestoneTwoDay}}"
+            },
+            {
+              "replaceText": "={{ $('OpenAI').item.json.message.content.milestoneDescriptionTwo }}",
+              "text": "{{milestoneDescriptionTwo}}"
+            },
+            {
+              "replaceText": "={{ $('OpenAI').item.json.message.content.milestoneThreeDay }}",
+              "text": "{{milestoneThreeDay}}"
+            },
+            {
+              "replaceText": "={{ $('OpenAI').item.json.message.content.milestoneDescriptionThree }}",
+              "text": "{{milestoneDescriptionThree}}"
+            },
+            {
+              "replaceText": "={{ $('OpenAI').item.json.message.content.milestoneFourDay }}",
+              "text": "{{milestoneFourDay}}"
+            },
+            {
+              "replaceText": "={{ $('OpenAI').item.json.message.content.milestoneDescriptionFour }}",
+              "text": "{{milestoneDescriptionFour}}"
+            },
+            {
+              "replaceText": "=1,850",
+              "text": "{{cost}}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSlides",
+      "typeVersion": 2,
+      "position": [
+        900,
+        40
+      ],
+      "id": "04ada45b-2334-4418-8623-b4ce4b8b481e",
+      "name": "Replace Text",
+      "credentials": {
+        "googleSlidesOAuth2Api": {
+          "id": "Moq1DXQoZQQ8zy20",
+          "name": "Google Slides account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o",
+          "mode": "list",
+          "cachedResultName": "GPT-4O"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "You are a helpful, intelligent writing assistant. ",
+              "role": "system"
+            },
+            {
+              "content": "Your task is to generate a proposal using input data from a form. This proposal should be highly customized, specific, and high-quality, considering we are going to be sending it immediately after you're done.\n\nContent: we are an automation/no-code agency that develops systems revolving around growth, revenue ops, etc.\n\nThe proposal template we're using has many fields. you must return these fields in one JSON object.\n\nUse this format:\n\n{\n  \"proposalTitle\": \"\",\n  \"descriptionName\": \"\",\n  \"oneParagraphProblemSummary\": \"\",\n  \"solutionHeadingOne\": \"\",\n  \"solutionDescriptionOne\": \"\",\n  \"solutionHeadingTwo\": \"\",\n  \"solutionDescriptionTwo\": \"\",\n  \"solutionHeadingThree\": \"\",\n  \"solutionDescriptionThree\": \"\",\n  \"shortScopeTitleOne\": \"\",\n  \"shortScopeTitleTwo\": \"\",\n  \"shortScopeTitleThree\": \"\",\n  \"shortScopeDescriptionOne\": \"\",\n  \"shortScopeDescriptionTwo\": \"\",\n  \"shortScopeDescriptionThree\": \"\",\n  \"milestoneOneDay\": \"\",\n  \"milestoneDescriptionOne\": \"\",\n  \"milestoneTwoDay\": \"\",\n  \"milestoneDescriptionTwo\": \"\",\n  \"milestoneThreeDay\": \"\",\n  \"milestoneDescriptionThree\": \"\",\n  \"milestoneFourDay\": \"\",\n  \"milestoneDescriptionFour\": \"\",\n  \"cost\": \"\"\n}\n\nRules:\n1. Use a spartan casual tone of voice.\n2. be to-the-point, but professional -assume you're writing to a sophisticated audience.\n3. Ensure that all fields are filled out. Do not miss a field or leave any variables empty.\n4. Keep things short. If a field contains the term \"Description\" it should be no more than ten fourteen words. For \"descriptionName\" do not use title case.\n "
+            },
+            {
+              "content": "={\n \"companyName\":\"{{ $json['Company Name'] }}\",\n \"problem\": \"{{ $json.Problem }}\",\n \"solution\": \"{{ $json.Solution }}\"\n \"scope\": \"{{ $json.Scope }}\",\n \"currentDate\":\"{{ $now.toLocaleString({ dateStyle: 'medium' }) }}\", \n \"howSoon\": \"{{ $json['How soon?'] }}\",\n \"depositCost\": \"{{ $json.Cost }}\"\n}"
+            },
+            {
+              "content": "{\n  \"proposalTitle\": \"Lead Gen System for XCompany\",\n  \"descriptionName\": \"A simple, scalable lead generation system built to help grow your content efforts & connect you with the right people.\",\n  \"oneParagraphProblemSummary\": \"Right now, XCompany is struggling with an inability to generate qualified leads. The majority of your new clients are referred-based, which, while always nice to have, is not scalable nor is it reliable. Building an alternative strategy—one that allows you to take leads from cold → close –is vital to the health and longevity of the company, and it’s what we’re going to help you with.\",\n  \"solutionHeadingOne\": \"Cold Outbound Lead Gen\",\n  \"solutionDescriptionOne\": \"We’ll put in place a robust cold-email-based system for you, using best practices.\",\n  \"solutionHeadingTwo\": \"Client Reactivation System\",\n  \"solutionDescriptionTwo\": \"We’ll build a simple, but high-ROI reactivation system to let you extract value from pre-existing clients.\",\n  \"solutionHeadingThree\": \"Best-In-Class Sales Training\",\n  \"solutionDescriptionThree\": \"We’ll train your team with world-class selling & closing mechanisms.\",\n  \"shortScopeTitleOne\": \"Cold email infrastructure that sends ~1K emails/day\",\n  \"shortScopeTitleTwo\": \"30K high-quality scraped email leads (included)\",\n  \"shortScopeTitleThree\": \"Four weekly one-hour sales training sessions over Zoom\",\n  \"shortScopeDescriptionOne\": \"12 domains, 36 mailboxes, DNS optimization, and warm-ups included.\",\n  \"shortScopeDescriptionTwo\": \"30.000 leads in your target market, delivered by CSV.\",\n  \"shortScopeDescriptionThree\": \"We’ll take your sales team from 0 → 1.\",\n  \"milestoneOneDay\": \"February 17th 2025\",\n  \"milestoneDescriptionOne\": \"Cold email system done & ready for warm-up.\",\n  \"milestoneTwoDay\": \"February 28th, 2025\",\n  \"milestoneDescriptionTwo\": \"Cold email system fully warmed up & operational.\",\n  \"milestoneThreeDay\": \"March 10th, 2025\",\n  \"milestoneDescriptionThree\": \"10,000 outbound emails sent; analysis & training #1.\",\n  \"milestoneFourDay\": \"March 17th, 2025\",\n  \"milestoneDescriptionFour\": \"One sales training per week alongside iteration & handoff.\",\n  \"cost\": \"1,845\"\n}",
+              "role": "assistant"
+            },
+            {
+              "content": "={\n \"companyName\":\"{{ $json['Company Name'] }}\",\n \"problem\": \"they are struggling making Youtube videos. Everything is really time intensive right now, mostly because they don't have scripts.\",\n \"solution\": \"AI script writing system, scrapes competitor, YouTube videos for ideas, and rephrases best performing titles, then writes outlines.\"\n \"scope\": \"form you can fill out with competitors that adds them to a DB. Once per day DB is scraped and you get however many people are in the sheet * however many people posted videos in the last 24 hours worth of script outlines. (max 200 per month)\",\n \"currentDate\": \"Feb 07 2025\",\n \"howSoon\": \"two weeks\",\n \"depositCost\": \"$3,525\",\n}"
+            }
+          ]
+        },
+        "jsonOutput": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        340,
+        40
+      ],
+      "id": "aad2447b-bf9e-412e-88af-a60d3c375463",
+      "name": "OpenAI",
+      "credentials": {
+        "openAiApi": {
+          "id": "fskrZo0Pd92FhRVq",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "copy",
+        "fileId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "1k78xDHzL7AoxCgUvuDzbKXcqm7FQlcjc228RfQJAST8"
+        },
+        "name": "={{ $json.message.content.proposalTitle }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        700,
+        40
+      ],
+      "id": "e5a56f68-7bdd-4101-b4cd-2bef373ee568",
+      "name": "Google Drive",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "MrnSKDY1mi2VccIB",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Sales Call Logging Form').item.json.Email }}",
+        "subject": "=Re: Proposal for {{ $('Sales Call Logging Form').item.json['Company Name'] }}",
+        "emailType": "text",
+        "message": "=Hey {{ $('Sales Call Logging Form').item.json['First Name'] }},\n\nThanks for the great call earlier. I had a moment after our chat to put together a detailed proposal for you. Please take a look at your earliest convenience and let me know your thoughts.\n\nYou can find it here:\nhttps://docs.google.com/presentation/d/{{$json.presentationId}}/edit\n\nIf you have any questions, just shout. I've also sent over an invoice for the amount (just to keep things convenient) and can get started anytime that's sorted. \n\nThanks.\nSimo",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        1100,
+        40
+      ],
+      "id": "27c8233c-f93a-4816-bde9-6c9e49fd23d4",
+      "name": "Gmail",
+      "webhookId": "e312835b-37ad-4dd3-9955-ba88e8a7270d",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "c8cgaQLcMnT9R14A",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "formTitle": "Sales Call Logging Form",
+        "formDescription": "This form logs a sales call & automatically generates a proposal.",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "First Name",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Last Name",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Company Name",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Website",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Problem",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Solution",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Cost",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Scope",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "How soon?",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Email",
+              "requiredField": true
+            }
+          ]
+        },
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.2,
+      "position": [
+        160,
+        40
+      ],
+      "id": "ac5b5ac8-b17d-4ff0-b5f7-f96e1c770846",
+      "name": "Sales Call Logging Form",
+      "webhookId": "da00e1fd-1982-4c4a-b088-de7df6edb7f5"
+    }
+  ],
+  "pinData": {
+    "Sales Call Logging Form": [
+      {
+        "json": {
+          "First Name": "Mo",
+          "Last Name": "Ben",
+          "Company Name": "Finatune",
+          "Website": "www.finatune.com",
+          "Problem": "they are struggling making Youtube videos. Everything is really time intensive right now, mostly because they don't have scripts",
+          "Solution": "AI script writing system, scrapes competitor, YouTube videos for ideas, and rephrases best performing titles, then writes outlines",
+          "Cost": "3,525",
+          "Scope": "form you can fill out with competitors that adds them to a DB. Once per day DB is scraped and you get however many people are in the sheet x however many people posted videos in the last 24 hours worth of script outlines",
+          "How soon?": "two weeks",
+          "Email": "finatune@gmail.com",
+          "submittedAt": "2025-02-07T22:34:30.991+01:00",
+          "formMode": "test"
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Replace Text": {
+      "main": [
+        [
+          {
+            "node": "Gmail",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI": {
+      "main": [
+        [
+          {
+            "node": "Google Drive",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Drive": {
+      "main": [
+        [
+          {
+            "node": "Replace Text",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sales Call Logging Form": {
+      "main": [
+        [
+          {
+            "node": "OpenAI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "2483a994-f6b4-4b34-bb75-8c87e0f3bebb",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "2d3aeb33d5158a5bd47e62b638e87005d90d58b22939e36881e4c38859950685"
+  },
+  "id": "yYdDxal3cOseEqev",
+  "tags": []
+}
