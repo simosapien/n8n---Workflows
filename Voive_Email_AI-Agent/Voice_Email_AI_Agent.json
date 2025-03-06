@@ -1,0 +1,234 @@
+{
+  "name": "Voice_Email_AI-Agent",
+  "nodes": [
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.body.message.toolCalls[0].function.arguments.Instruction }}",
+        "options": {
+          "systemMessage": "You are a personal assistant of Mohammed, Your job is to only send emails to his contacts.\nYou have access to Mohammed's contacts and his email account to send emails too."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        220,
+        0
+      ],
+      "id": "d91a31c3-4ce0-4c0c-94d9-5821ee1fc9fa",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4o",
+          "mode": "list",
+          "cachedResultName": "gpt-4o"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        180,
+        220
+      ],
+      "id": "cca4af5b-9b17-47d8-9c82-084b80ecc8bb",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "fskrZo0Pd92FhRVq",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $('Webhook').item.json.body.message.call.id }}",
+        "contextWindowLength": 10
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        320,
+        220
+      ],
+      "id": "4899f3ae-0f95-45c0-80a1-9e0db4ff48fb",
+      "name": "Window Buffer Memory"
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Use Google Sheets to find Mohammed's contacts",
+        "documentId": {
+          "__rl": true,
+          "value": "1ZVLa0nLVrcJsyjBS52-G_WuxIYL_JT0vcixWhWI1m5Y",
+          "mode": "list",
+          "cachedResultName": "n8n_email-contacts",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1ZVLa0nLVrcJsyjBS52-G_WuxIYL_JT0vcixWhWI1m5Y/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1ZVLa0nLVrcJsyjBS52-G_WuxIYL_JT0vcixWhWI1m5Y/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.5,
+      "position": [
+        480,
+        220
+      ],
+      "id": "5092a864-d3a1-44e7-8fa2-19e1c0b4dcf8",
+      "name": "Google Sheets",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "UycbsSISAQ1hNnq1",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $fromAI('recepient_email_address') }}",
+        "subject": "={{ $fromAI('mail_subject') }}",
+        "message": "={{ $fromAI('email_text') }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        680,
+        220
+      ],
+      "id": "cb273484-aacb-40ba-b7cf-403660954a35",
+      "name": "Gmail",
+      "webhookId": "a6241c98-d4a3-4faf-a0ac-7e074e9b9f1f",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "c8cgaQLcMnT9R14A",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "a7c72cbf-b1b2-4e5d-8dbc-a3ad8713487f",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -20,
+        0
+      ],
+      "id": "43d802dc-4196-4b2a-a970-0af70642c521",
+      "name": "Webhook",
+      "webhookId": "a7c72cbf-b1b2-4e5d-8dbc-a3ad8713487f"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={\n    \"results\": [\n        {\n            \"toolCallId\": \"{{ $('Webhook').item.json.body.message.toolCalls[0].id }}\",\n            \"result\": {{ JSON.stringify($json.output) }}\n        }\n    ]\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        580,
+        0
+      ],
+      "id": "b2c6c64d-6d10-4fd6-b474-8a5188e9d4e7",
+      "name": "Respond to Webhook"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Window Buffer Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gmail": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "d06c8afd-626c-4388-b12f-61a73a13003e",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "2d3aeb33d5158a5bd47e62b638e87005d90d58b22939e36881e4c38859950685"
+  },
+  "id": "dFgvRD56Kw4V9wnr",
+  "tags": []
+}
