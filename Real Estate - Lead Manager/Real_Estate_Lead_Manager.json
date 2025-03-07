@@ -1,0 +1,333 @@
+{
+  "name": "Real Estate - Lead Manager",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "messages"
+        ]
+      },
+      "type": "n8n-nodes-base.whatsAppTrigger",
+      "typeVersion": 1,
+      "position": [
+        -240,
+        0
+      ],
+      "id": "accd3436-a0b1-45c0-b4d6-68b433c56bed",
+      "name": "WhatsApp Trigger",
+      "webhookId": "23c291da-cafe-4fe1-bf0b-18254dbb5914",
+      "credentials": {
+        "whatsAppTriggerApi": {
+          "id": "Le3m59YimWKfZqnS",
+          "name": "WhatsApp OAuth account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Full Name: {{ $json.contacts[0].profile.name }}\nPhone Number: {{ $json.contacts[0].wa_id }}\n\nUser: {{ $json.messages[0].text.body }}\n\n",
+        "options": {
+          "systemMessage": "You are an expert real estate agent who is responding to new leads in a social media marketing campaign.\n\nYour job is to talk to the user and guide him through a three step process:\n\n1. Answer his queries about the properties. Make sure you filter the properties adequately based on the user's needs.\n\n2. Qualify the lead. Make sure the user's budget is within 20% of the listed price of the property and he is looking to buy in the next 6 months.\n\n3. Book a viewing of the user. When booking, make sure that the viewing time of the property and the user align. If the user is asking for a time other than the mentioned time, suggest them alternative options.\n\nMake sure your responses are humanized. Do not explain how you are thinking, just talk to the user like a human would. Use simple language understandable by a 8th grader.\n\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        300,
+        0
+      ],
+      "id": "05ba9824-c12f-4114-a72c-abd8dd935a02",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4o",
+          "mode": "list",
+          "cachedResultName": "gpt-4o"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        220,
+        220
+      ],
+      "id": "2bd76d88-f56e-4cb0-b49d-36dcf3286dca",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "fskrZo0Pd92FhRVq",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $('WhatsApp Trigger').item.json.contacts[0].wa_id }}",
+        "contextWindowLength": 10
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        360,
+        220
+      ],
+      "id": "51da5a32-8559-4fd8-9bba-2986a076992d",
+      "name": "Window Buffer Memory"
+    },
+    {
+      "parameters": {
+        "height": 660,
+        "width": 440
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -400,
+        -200
+      ],
+      "id": "d3ec16cd-5016-45c3-979e-06a157397ce1",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Read property information and use that to qualify the user and look for viewing times.",
+        "documentId": {
+          "__rl": true,
+          "value": "1UjDy57mpcSu0XoBov3d6Th6pB6UFk-CT7Zzpjdt06vk",
+          "mode": "list",
+          "cachedResultName": "Real Estate Agent - Property listing",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1UjDy57mpcSu0XoBov3d6Th6pB6UFk-CT7Zzpjdt06vk/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Property Data",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1UjDy57mpcSu0XoBov3d6Th6pB6UFk-CT7Zzpjdt06vk/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.5,
+      "position": [
+        500,
+        220
+      ],
+      "id": "37b91e0d-5d3b-4356-830f-43d98a85c7f6",
+      "name": "Get Property information",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "UycbsSISAQ1hNnq1",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Create new viewings for customers against specific properties. Make sure you have the required information (Property Name, Viewing Slot, User's Needs, Full Name, Phone Number) before you book a viewing.",
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1UjDy57mpcSu0XoBov3d6Th6pB6UFk-CT7Zzpjdt06vk",
+          "mode": "list",
+          "cachedResultName": "Real Estate Agent - Property listing",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1UjDy57mpcSu0XoBov3d6Th6pB6UFk-CT7Zzpjdt06vk/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 985551392,
+          "mode": "list",
+          "cachedResultName": "Viewings Data",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1UjDy57mpcSu0XoBov3d6Th6pB6UFk-CT7Zzpjdt06vk/edit#gid=985551392"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Property Name": "={{ $fromAI('property_name') }}",
+            "Viewing Slot": "={{ $fromAI('viewing_slot') }}",
+            "User's Needs": "={{ $fromAI('user_needs') }}",
+            "Full Name ": "={{ $fromAI('full_name') }}",
+            "Phone Number": "={{ $fromAI('phone_number') }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Property Name",
+              "displayName": "Property Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Viewing Slot",
+              "displayName": "Viewing Slot",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "User's Needs",
+              "displayName": "User's Needs",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Full Name ",
+              "displayName": "Full Name ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Phone Number",
+              "displayName": "Phone Number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.5,
+      "position": [
+        640,
+        220
+      ],
+      "id": "9d1d94ba-315b-493d-a6ad-b1e79f04b19f",
+      "name": "Book a Viewing",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "UycbsSISAQ1hNnq1",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "send",
+        "phoneNumberId": "582125111643240",
+        "recipientPhoneNumber": "={{ $('WhatsApp Trigger').item.json.contacts[0].wa_id }}",
+        "textBody": "={{ $json.output }}",
+        "additionalFields": {},
+        "requestOptions": {}
+      },
+      "type": "n8n-nodes-base.whatsApp",
+      "typeVersion": 1,
+      "position": [
+        940,
+        0
+      ],
+      "id": "9361590c-e921-471f-8eab-af737d5096f0",
+      "name": "WhatsApp Business Cloud",
+      "credentials": {
+        "whatsAppApi": {
+          "id": "Ja3lBgAUDTY6tnrr",
+          "name": "WhatsApp account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "WhatsApp Trigger": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Window Buffer Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Property information": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Book a Viewing": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "WhatsApp Business Cloud",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "f6c5a48c-aa56-4046-b14a-50da05022a28",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "2d3aeb33d5158a5bd47e62b638e87005d90d58b22939e36881e4c38859950685"
+  },
+  "id": "nQr26wstJqDNhcyF",
+  "tags": []
+}
