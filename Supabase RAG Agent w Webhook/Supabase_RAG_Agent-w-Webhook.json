@@ -1,0 +1,863 @@
+{
+  "name": "Supabase RAG Agent w Webhook",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "42165c12-01b9-4d3f-8935-365a50e8139a",
+      "name": "OpenAI Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1,
+      "position": [
+        -720,
+        360
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "fskrZo0Pd92FhRVq",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "50c7cf2c-e99f-491e-868a-3e450d1a7010",
+      "name": "OpenAI Chat Model1",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1,
+      "position": [
+        400,
+        300
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "fskrZo0Pd92FhRVq",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsonMode": "expressionData",
+        "jsonData": "={{ $json.data }}",
+        "options": {
+          "metadata": {
+            "metadataValues": [
+              {
+                "name": "=file_id",
+                "value": "={{ $('Set File ID').item.json.file_id }}"
+              }
+            ]
+          }
+        }
+      },
+      "id": "bcc4482d-eb5e-4936-bb3d-752b9fa54b5b",
+      "name": "Default Data Loader",
+      "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
+      "typeVersion": 1,
+      "position": [
+        540,
+        840
+      ]
+    },
+    {
+      "parameters": {
+        "model": "text-embedding-3-small",
+        "options": {}
+      },
+      "id": "1d9be687-a0f4-4d0a-a0c8-b3c76f7f51b8",
+      "name": "Embeddings OpenAI1",
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+      "typeVersion": 1,
+      "position": [
+        380,
+        840
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "fskrZo0Pd92FhRVq",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "name": "user_documents",
+        "description": "Contains all the user's documents that you can check for context to answer user questions."
+      },
+      "id": "ea6e5995-63c8-4035-b6f7-6dccb673575a",
+      "name": "Retrieve Documents",
+      "type": "@n8n/n8n-nodes-langchain.toolVectorStore",
+      "typeVersion": 1,
+      "position": [
+        180,
+        120
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## Agent Tools for RAG",
+        "height": 528.85546469693,
+        "width": 583.4552380860637,
+        "color": 4
+      },
+      "id": "b6e11c21-a27f-4252-950b-641e5213303e",
+      "name": "Sticky Note",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## Tool to Add a Google Drive File to Vector DB",
+        "height": 671.8877842322804,
+        "width": 2070.8894079025763,
+        "color": 5
+      },
+      "id": "dcb61ad0-9488-4df1-8957-67a22b2e126b",
+      "name": "Sticky Note1",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -1220,
+        540
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $('Set File ID').item.json.file_id }}",
+          "mode": "id"
+        },
+        "options": {
+          "googleFileConversion": {
+            "conversion": {
+              "docsToFormat": "text/plain"
+            }
+          }
+        }
+      },
+      "id": "4164cc5a-1dff-4280-9ea7-faf8cffb9568",
+      "name": "Download File",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -120,
+        720
+      ],
+      "executeOnce": true,
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "MrnSKDY1mi2VccIB",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "triggerOn": "specificFolder",
+        "folderToWatch": {
+          "__rl": true,
+          "value": "1IdykI1s48TNQGC0uL8tNUm5IZDmp9YjM",
+          "mode": "list",
+          "cachedResultName": "n8n - Meeting Notes",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1IdykI1s48TNQGC0uL8tNUm5IZDmp9YjM"
+        },
+        "event": "fileCreated",
+        "options": {}
+      },
+      "id": "9cff3bfc-ac57-4e8a-afdf-8341e55a430b",
+      "name": "File Created",
+      "type": "n8n-nodes-base.googleDriveTrigger",
+      "typeVersion": 1,
+      "position": [
+        -1160,
+        620
+      ],
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "MrnSKDY1mi2VccIB",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "triggerOn": "specificFolder",
+        "folderToWatch": {
+          "__rl": true,
+          "value": "1IdykI1s48TNQGC0uL8tNUm5IZDmp9YjM",
+          "mode": "list",
+          "cachedResultName": "n8n - Meeting Notes",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1IdykI1s48TNQGC0uL8tNUm5IZDmp9YjM"
+        },
+        "event": "fileUpdated",
+        "options": {}
+      },
+      "id": "a19ec92e-59ae-49f7-9567-cb40776e11cc",
+      "name": "File Updated",
+      "type": "n8n-nodes-base.googleDriveTrigger",
+      "typeVersion": 1,
+      "position": [
+        -1160,
+        840
+      ],
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "MrnSKDY1mi2VccIB",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "text",
+        "options": {}
+      },
+      "id": "da624642-773c-46df-af3f-562df3386944",
+      "name": "Extract Document Text",
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        140,
+        720
+      ],
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "model": "text-embedding-3-small",
+        "options": {}
+      },
+      "id": "7fb134db-cf4f-4a5d-a007-37ca69b47cc4",
+      "name": "Embeddings OpenAI",
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+      "typeVersion": 1,
+      "position": [
+        220,
+        400
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "fskrZo0Pd92FhRVq",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "id": "6bbd53bf-5e4d-4e8c-b0d6-04a8987bd9d5",
+      "name": "Postgres Chat Memory",
+      "type": "@n8n/n8n-nodes-langchain.memoryPostgresChat",
+      "typeVersion": 1,
+      "position": [
+        -580,
+        360
+      ],
+      "notesInFlow": false,
+      "credentials": {
+        "postgres": {
+          "id": "qQKaXsuZPHXiJQAE",
+          "name": "Postgres SUPABASE account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "a8dd4a9b-d09c-4f84-91ce-9a66d06f5c67",
+      "name": "Recursive Character Text Splitter",
+      "type": "@n8n/n8n-nodes-langchain.textSplitterRecursiveCharacterTextSplitter",
+      "typeVersion": 1,
+      "position": [
+        540,
+        1040
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "delete",
+        "tableId": "documents",
+        "filterType": "string",
+        "filterString": "=metadata->>file_id=like.*{{ $json.file_id }}*"
+      },
+      "id": "c416796e-7390-4f11-919d-b9ffd0e07892",
+      "name": "Delete Old Doc Rows",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        -420,
+        720
+      ],
+      "alwaysOutputData": true,
+      "credentials": {
+        "supabaseApi": {
+          "id": "cbfPnz2Mob8xLqq2",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "10646eae-ae46-4327-a4dc-9987c2d76173",
+              "name": "file_id",
+              "value": "={{ $json.id }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "69add542-4619-4c66-a0c7-5f5c1df2d4ba",
+      "name": "Set File ID",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -740,
+        720
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## RAG AI Agent with Chat Interface & Webhook",
+        "height": 525,
+        "width": 1213
+      },
+      "id": "5e37c0de-43aa-4da7-8835-a55195a48375",
+      "name": "Sticky Note2",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -1220,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "public": true,
+        "options": {}
+      },
+      "id": "027a1b1d-c33f-4029-b853-c63709655941",
+      "name": "When chat message received",
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -1100,
+        140
+      ],
+      "webhookId": "e985d15f-b2f6-456d-be15-97e0b1544a40"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $('When chat message received').item.json.chatInput }}",
+        "options": {
+          "systemMessage": "You are a personal assistant who helps answer questions from a corpus of documents when you don't know the answer yourself."
+        }
+      },
+      "id": "c16e0af0-9522-4e40-957e-9ddb44d29d19",
+      "name": "RAG AI Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.6,
+      "position": [
+        -620,
+        100
+      ]
+    },
+    {
+      "parameters": {
+        "tableName": {
+          "__rl": true,
+          "value": "documents",
+          "mode": "list",
+          "cachedResultName": "documents"
+        },
+        "options": {
+          "queryName": "match_documents"
+        }
+      },
+      "id": "31d8c7cd-acc5-4214-9c41-5c93aa5ff117",
+      "name": "Supabase Vector Store",
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
+      "typeVersion": 1,
+      "position": [
+        60,
+        280
+      ],
+      "credentials": {
+        "supabaseApi": {
+          "id": "cbfPnz2Mob8xLqq2",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "insert",
+        "tableName": {
+          "__rl": true,
+          "value": "documents",
+          "mode": "list",
+          "cachedResultName": "documents"
+        },
+        "options": {
+          "queryName": "match_documents"
+        }
+      },
+      "id": "4ce4cb22-da0b-405a-bdd5-ce756f57b1e5",
+      "name": "Insert into Supabase Vectorstore",
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
+      "typeVersion": 1,
+      "position": [
+        420,
+        620
+      ],
+      "credentials": {
+        "supabaseApi": {
+          "id": "cbfPnz2Mob8xLqq2",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "6161a7bd-526a-4f9f-a50f-48b6aa3142e6",
+        "authentication": "headerAuth",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -1100,
+        340
+      ],
+      "id": "0f2ba6d9-91ad-49e8-80ca-46f8eb9a9131",
+      "name": "Webhook",
+      "webhookId": "6161a7bd-526a-4f9f-a50f-48b6aa3142e6",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "kwfeFu5ej3vzKIZW",
+          "name": "Header Auth account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        -260,
+        100
+      ],
+      "id": "1a675842-da40-43e1-94fc-ea6d7ee23c3b",
+      "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "0223142e-41eb-459a-809d-283b12b6187e",
+              "name": "chatIput",
+              "value": "={{ $json?.chatInput || $json.body.chatInput }}",
+              "type": "string"
+            },
+            {
+              "id": "a20d4fcd-459b-4316-ae92-c08af1819308",
+              "name": "sessionId",
+              "value": "{{ $json?.sessionId || $json.body.sessionId }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -840,
+        100
+      ],
+      "id": "84ae1a39-a227-467c-ae80-072a38c96d69",
+      "name": "Edit Fields"
+    }
+  ],
+  "pinData": {
+    "File Created": [
+      {
+        "json": {
+          "kind": "drive#file",
+          "copyRequiresWriterPermission": false,
+          "writersCanShare": true,
+          "viewedByMe": true,
+          "mimeType": "application/vnd.google-apps.document",
+          "exportLinks": {
+            "application/rtf": "https://docs.google.com/feeds/download/documents/export/Export?id=17ubIUxXpZqTjs64fWV3aMfREcRMjDoGA9pBd_2i2_RQ&exportFormat=rtf",
+            "application/vnd.oasis.opendocument.text": "https://docs.google.com/feeds/download/documents/export/Export?id=17ubIUxXpZqTjs64fWV3aMfREcRMjDoGA9pBd_2i2_RQ&exportFormat=odt",
+            "text/html": "https://docs.google.com/feeds/download/documents/export/Export?id=17ubIUxXpZqTjs64fWV3aMfREcRMjDoGA9pBd_2i2_RQ&exportFormat=html",
+            "application/pdf": "https://docs.google.com/feeds/download/documents/export/Export?id=17ubIUxXpZqTjs64fWV3aMfREcRMjDoGA9pBd_2i2_RQ&exportFormat=pdf",
+            "text/x-markdown": "https://docs.google.com/feeds/download/documents/export/Export?id=17ubIUxXpZqTjs64fWV3aMfREcRMjDoGA9pBd_2i2_RQ&exportFormat=markdown",
+            "text/markdown": "https://docs.google.com/feeds/download/documents/export/Export?id=17ubIUxXpZqTjs64fWV3aMfREcRMjDoGA9pBd_2i2_RQ&exportFormat=markdown",
+            "application/epub+zip": "https://docs.google.com/feeds/download/documents/export/Export?id=17ubIUxXpZqTjs64fWV3aMfREcRMjDoGA9pBd_2i2_RQ&exportFormat=epub",
+            "application/zip": "https://docs.google.com/feeds/download/documents/export/Export?id=17ubIUxXpZqTjs64fWV3aMfREcRMjDoGA9pBd_2i2_RQ&exportFormat=zip",
+            "application/vnd.openxmlformats-officedocument.wordprocessingml.document": "https://docs.google.com/feeds/download/documents/export/Export?id=17ubIUxXpZqTjs64fWV3aMfREcRMjDoGA9pBd_2i2_RQ&exportFormat=docx",
+            "text/plain": "https://docs.google.com/feeds/download/documents/export/Export?id=17ubIUxXpZqTjs64fWV3aMfREcRMjDoGA9pBd_2i2_RQ&exportFormat=txt"
+          },
+          "parents": [
+            "1IdykI1s48TNQGC0uL8tNUm5IZDmp9YjM"
+          ],
+          "thumbnailLink": "https://lh3.googleusercontent.com/drive-storage/AJQWtBM2pqqQ9GzFX2PGxfYMoYPB57w-m9Jh1RlsFrFwLeo7nagXsWDMOA6ibrnPszwfnpB9gqtqJnoB3cHkLlNfFmHcZPcUqqjTaZufmPNVbjJ9LXRCXk3gGQopwykGmg=s220",
+          "iconLink": "https://drive-thirdparty.googleusercontent.com/16/type/application/vnd.google-apps.document",
+          "shared": false,
+          "lastModifyingUser": {
+            "displayName": "Handigeni Digital Innovations",
+            "kind": "drive#user",
+            "me": true,
+            "permissionId": "00922329401793643071",
+            "emailAddress": "handigeni@gmail.com",
+            "photoLink": "https://lh3.googleusercontent.com/a/ACg8ocJqXmI3jzJsapHj0KqFzx3yF0NGW3p1Spmw-8mKsOvr9B5TNxk=s64"
+          },
+          "owners": [
+            {
+              "displayName": "Handigeni Digital Innovations",
+              "kind": "drive#user",
+              "me": true,
+              "permissionId": "00922329401793643071",
+              "emailAddress": "handigeni@gmail.com",
+              "photoLink": "https://lh3.googleusercontent.com/a/ACg8ocJqXmI3jzJsapHj0KqFzx3yF0NGW3p1Spmw-8mKsOvr9B5TNxk=s64"
+            }
+          ],
+          "webViewLink": "https://docs.google.com/document/d/17ubIUxXpZqTjs64fWV3aMfREcRMjDoGA9pBd_2i2_RQ/edit?usp=drivesdk",
+          "size": "1024",
+          "viewersCanCopyContent": true,
+          "permissions": [
+            {
+              "id": "00922329401793643071",
+              "displayName": "Handigeni Digital Innovations",
+              "type": "user",
+              "kind": "drive#permission",
+              "photoLink": "https://lh3.googleusercontent.com/a/ACg8ocJqXmI3jzJsapHj0KqFzx3yF0NGW3p1Spmw-8mKsOvr9B5TNxk=s64",
+              "emailAddress": "handigeni@gmail.com",
+              "role": "owner",
+              "deleted": false,
+              "pendingOwner": false
+            }
+          ],
+          "hasThumbnail": true,
+          "spaces": [
+            "drive"
+          ],
+          "id": "17ubIUxXpZqTjs64fWV3aMfREcRMjDoGA9pBd_2i2_RQ",
+          "name": "8/25 Meeting Notes",
+          "starred": false,
+          "trashed": false,
+          "explicitlyTrashed": false,
+          "createdTime": "2025-03-09T20:21:23.574Z",
+          "modifiedTime": "2025-03-09T20:22:17.234Z",
+          "modifiedByMeTime": "2025-03-09T20:22:17.234Z",
+          "viewedByMeTime": "2025-03-09T20:22:17.234Z",
+          "quotaBytesUsed": "1024",
+          "version": "8",
+          "ownedByMe": true,
+          "isAppAuthorized": false,
+          "capabilities": {
+            "canChangeViewersCanCopyContent": true,
+            "canEdit": true,
+            "canCopy": true,
+            "canComment": true,
+            "canAddChildren": false,
+            "canDelete": true,
+            "canDownload": true,
+            "canListChildren": false,
+            "canRemoveChildren": false,
+            "canRename": true,
+            "canTrash": true,
+            "canReadRevisions": true,
+            "canChangeCopyRequiresWriterPermission": true,
+            "canMoveItemIntoTeamDrive": true,
+            "canUntrash": true,
+            "canModifyContent": true,
+            "canMoveItemOutOfDrive": true,
+            "canAddMyDriveParent": false,
+            "canRemoveMyDriveParent": true,
+            "canMoveItemWithinDrive": true,
+            "canShare": true,
+            "canMoveChildrenWithinDrive": false,
+            "canModifyContentRestriction": true,
+            "canChangeSecurityUpdateEnabled": false,
+            "canAcceptOwnership": false,
+            "canReadLabels": false,
+            "canModifyLabels": false,
+            "canModifyEditorContentRestriction": true,
+            "canModifyOwnerContentRestriction": true,
+            "canRemoveContentRestriction": false,
+            "canDisableInheritedPermissions": false,
+            "canEnableInheritedPermissions": true
+          },
+          "thumbnailVersion": "3",
+          "modifiedByMe": true,
+          "permissionIds": [
+            "00922329401793643071"
+          ],
+          "linkShareMetadata": {
+            "securityUpdateEligible": false,
+            "securityUpdateEnabled": true
+          },
+          "inheritedPermissionsDisabled": false
+        }
+      }
+    ]
+  },
+  "connections": {
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "RAG AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Retrieve Documents",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Retrieve Documents": {
+      "ai_tool": [
+        [
+          {
+            "node": "RAG AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download File": {
+      "main": [
+        [
+          {
+            "node": "Extract Document Text",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "File Created": {
+      "main": [
+        [
+          {
+            "node": "Set File ID",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings OpenAI": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Supabase Vector Store",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Document Text": {
+      "main": [
+        [
+          {
+            "node": "Insert into Supabase Vectorstore",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings OpenAI1": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Insert into Supabase Vectorstore",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Default Data Loader": {
+      "ai_document": [
+        [
+          {
+            "node": "Insert into Supabase Vectorstore",
+            "type": "ai_document",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Postgres Chat Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "RAG AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Recursive Character Text Splitter": {
+      "ai_textSplitter": [
+        [
+          {
+            "node": "Default Data Loader",
+            "type": "ai_textSplitter",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Delete Old Doc Rows": {
+      "main": [
+        [
+          {
+            "node": "Download File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set File ID": {
+      "main": [
+        [
+          {
+            "node": "Delete Old Doc Rows",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "File Updated": {
+      "main": [
+        [
+          {
+            "node": "Set File ID",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Supabase Vector Store": {
+      "ai_vectorStore": [
+        [
+          {
+            "node": "Retrieve Documents",
+            "type": "ai_vectorStore",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "RAG AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "RAG AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "77dd1f7b-1de9-40a1-83b1-62f87ab0b6e1",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "2d3aeb33d5158a5bd47e62b638e87005d90d58b22939e36881e4c38859950685"
+  },
+  "id": "NgBygPy8crnpQFZw",
+  "tags": []
+}
