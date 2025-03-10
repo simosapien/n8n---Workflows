@@ -41,11 +41,15 @@ def send_message_to_llm(session_id, message):
     if response.status_code == 200:
         if response.text:
             try:
-                return response.json()["output"]
+                # Handle the array response format
+                response_data = response.json()
+                if isinstance(response_data, list) and len(response_data) > 0:
+                    return response_data[0]["output"]
+                return "No response from assistant"
             except Exception as e:
                 return f"Error parsing response: {str(e)}\nResponse text: {response.text}"
         else:
-            return "Received empty response from server. Please check your n8n workflow configuration."
+            return "Received empty response from server"
     else:
         return f"Error: {response.status_code} - {response.text}"
 
